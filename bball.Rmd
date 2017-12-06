@@ -1,0 +1,172 @@
+---
+title: "Basketball"
+author: "Adira Dangoy"
+date: "December 6, 2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+<!-- R Commander Markdown Template -->
+  
+  Replace with Main Title
+=======================
+  
+  ### Your Name
+  
+  ### `r as.character(Sys.Date())`
+  
+  ```{r echo=FALSE}
+# include this code chunk as-is to set options
+knitr::opts_chunk$set(comment=NA, prompt=TRUE, out.width=750, fig.height=8, fig.width=8)
+library(Rcmdr)
+library(car)
+library(RcmdrMisc)
+```
+
+
+```{r echo=FALSE}
+# include this code chunk as-is to enable 3D graphs
+library(rgl)
+knitr::knit_hooks$set(webgl = hook_webgl)
+```
+
+
+
+```{r}
+Bball <- 
+  readSPSS("C:/Users/adira/Documents/Prob and Stats/Regression/NCAAMBB2014.sav",
+           rownames=FALSE, stringsAsFactors=TRUE, tolower=FALSE)
+names(Bball) <- make.names(names(Bball))
+```
+
+
+
+
+
+```{r}
+require("ggplot2")
+.df <- data.frame(x = Bball$WinLossPct, y = Bball$OppPoints)
+.plot <- ggplot(data = .df, aes(x = x, y = y)) + 
+  geom_point() + 
+  stat_smooth(method = "lm") + 
+  scale_y_continuous(expand = c(0.01, 0)) + 
+  xlab("WinLossPct") + 
+  ylab("OppPoints") + 
+  theme_bw(base_size = 14, base_family = "sans")
+print(.plot)
+rm(.df, .plot)
+```
+
+
+
+
+
+```{r}
+RegModel.1 <- lm(WinLossPct~OppPoints, data=Bball)
+summary(RegModel.1)
+```
+
+```{r}
+cor(Bball[,c("OppPoints","WinLossPct")], use="complete")
+```
+
+
+-----------------------------
+
+
+```{r}
+require("ggplot2")
+.df <- data.frame(x = Bball$WinLossPct, y = Bball$TeamPoints)
+.plot <- ggplot(data = .df, aes(x = x, y = y)) + 
+  geom_point() + 
+  stat_smooth(method = "lm") + 
+  scale_y_continuous(expand = c(0.01, 0)) + 
+  xlab("WinLossPct") + 
+  ylab("TeamPoints") + 
+  theme_bw(base_size = 14, base_family = "sans")
+print(.plot)
+rm(.df, .plot)
+```
+
+```{r}
+RegModel.1 <- lm(WinLossPct~TeamPoints, data=Bball)
+summary(RegModel.1)
+```
+
+```{r}
+cor(Bball[,c("TeamPoints","WinLossPct")], use="complete")
+```
+
+
+-------------------------
+
+```{r}
+require("ggplot2")
+.df <- na.omit(data.frame(x = Bball$GamesPlayed))
+.nbins <- pretty(range(.df$x), n = nclass.scott(.df$x), min.n = 1)
+.plot <- ggplot(data = .df, aes(x = x, y = ..density..)) + 
+  geom_histogram(breaks = .nbins) + 
+  scale_y_continuous(expand = c(0.01, 0)) + 
+  xlab("GamesPlayed") + 
+  ylab("Density") + 
+  theme_bw(base_size = 14, base_family = "sans")
+print(.plot)
+rm(.df, .nbins, .plot)
+```
+
+
+
+```{r}
+Bball$OPP_PPG <- with(Bball, OppPoints / GamesPlayed)
+```
+
+
+```{r}
+require("ggplot2")
+.df <- data.frame(x = Bball$WinLossPct, y = Bball$OPP_PPG)
+.plot <- ggplot(data = .df, aes(x = x, y = y)) + 
+  geom_point() + 
+  stat_smooth(method = "lm") + 
+  scale_y_continuous(expand = c(0.01, 0)) + 
+  xlab("WinLossPct") + 
+  ylab("OPP_PPG") + 
+  theme_bw(base_size = 14, base_family = "sans")
+print(.plot)
+rm(.df, .plot)
+```
+```{r}
+RegModel.1 <- lm(WinLossPct~OPP_PPG, data=Bball)
+summary(RegModel.1)
+```
+
+```{r}
+cor(Bball[,c("TeamPoints","OPP_PPG")], use="complete")
+```
+
+
+-----------
+
+```{r}
+require("ggplot2")
+.df <- data.frame(x = Bball$WinLossPct, y = Bball$WinHome)
+.plot <- ggplot(data = .df, aes(x = x, y = y)) + 
+  geom_point() + 
+  stat_smooth(method = "lm") + 
+  scale_y_continuous(expand = c(0.01, 0)) + 
+  xlab("WinLossPct") + 
+  ylab("WinHome") + 
+  theme_bw(base_size = 14, base_family = "sans")
+print(.plot)
+rm(.df, .plot)
+```
+
+
+```{r}
+RegModel.1 <- lm(WinLossPct~WinHome, data=Bball)
+summary(RegModel.1)
+```
+
+```{r}
+cor(Bball[,c("WinLossPct","WinHome")], use="complete")
+```
